@@ -1,4 +1,4 @@
-#include <stdio.h> //"cabeçalho padrão de entrada/saída", this is a  preprocessor command
+#include <stdio.h> //"cabeçalho padrão de entrada/saída", this is a preprocessor command
 #include <stdlib.h> //possui funções envolvendo alocação de memória, controle de processos, conversões e outras 
 
 // definindo constantes
@@ -6,13 +6,26 @@
 #define LARGURA 15
 #define NOVA_LINHA '\n'
 
-int fun(int arg) { // declarando e implementando a função 'fun' que será usada dentro do main()
-    return 2+arg;
+// declarando uma variável global
+int global;
+int a=111; // essa variável também esta declarada dentro do main
+
+/* Forma geral de uma função em C:
+
+return_type function_name( parameter list ) {
+   body of the function
+} 
+*/
+
+int fun(int a) { // declarando e implementando a função 'fun' que será usada dentro do main()
+    return a+1; // o valor de a utilizado será o que está dentro do main
 }
 
-int foo(int bar); // declarando a função foo. Esta função esta implementada no final.
+int foo(int); /* declarando a função foo. Esta função esta implementada no final. Não é necessario colocar um nome para a 
+variável apenas o seu tipo. Quando a implementação da função está em um arquivo diferente é necessário declarar a função 
+no arquivo que chama a função*/
 
-void print_big(int number); /* void -> função que não tem return */
+void print_big(int number); /* return_type = void -> função que não tem return */
 
 int soma (int num) {
        static int total = 0; // usando static a variável total se torna acessível dentro do main
@@ -52,26 +65,29 @@ int main() { //main function where the program execution begins
     // imprimindo
     printf("\n Olá mundo!");
 
-    // definindo variáveis inteiras e reais
-    int a=0, d=3, e=4;
+    // definindo variáveis locais a função main
+    int a=1, d=3, e=4;
     int oc1=07, oc2=02, oc3; //octal values
     int hex1=0xf, hex2=0x2, hex3; //hexadecimal values
     char letra_1='x'; //char ten apenas 1 byte e é um tipo de int
     float b=1.3e-1; // b=1.3x10^(-1)=0.13
     double c=2.0;
-    float sum;
+    float divs;
 
-    // fazendo operações com as variáveis acima
-    a= d+c*d-c;
-    sum= a+b+c;
+    // imoprimindo a variável a, a impressão será a da variável local
+    printf("\n a = %d", a);
+
+    // fazendo operações com as variáveis acima e com variável global
+    global= a+d*e-d;
+    divs= c/b;
     oc3=oc1+oc2;
     hex3=hex1-hex2;
-    printf("\n a = %d",a); /*Vai imprimir o novo valor de a.*/
-    printf("\n A soma de a, b e c é: %.2f.", sum,"\n");
+    printf("\n global = %d",global); /*Vai imprimir o novo valor de a.*/
+    printf("\n c/b = %.2f.", divs,"\n");
     printf("\n oc3 = %o, hex3 = %x", oc3, hex3);
     printf("\n letra_1 = %c", letra_1);
 
-    // utilizando constantes definidas no préprocessamento
+    // utilizando constantes definidas no pré-processamento
     int area;
 
     area = ALTURA * LARGURA;
@@ -182,7 +198,7 @@ int main() { //main function where the program execution begins
     // concatenando strings
     char dest[18]="Hello";
     char src[7]=" World";
-    strncat(dest,src,6);
+    strncat(dest,src,6); // C built-in function 
     printf("\n %s",dest);
     strncat(dest,src,20);
     printf("\n %s",dest);
@@ -223,6 +239,10 @@ int main() { //main function where the program execution begins
         printf("\n %d", array[n]);
         n++;
     }
+
+    printf("\n O valor de foo é %d.", foo(1));
+
+    printf("\n O valor de fun é %d.", fun(1));
 
     printf("\n O valor de fun é %d.", fun(1));
 
@@ -383,8 +403,8 @@ int main() { //main function where the program execution begins
     return 0;
 }
 
-int foo(int bar) {  // implementando a função foo
-    return bar + 1;
+int foo(int a) {  // implementando a função foo
+    return a+1; // o valor de a utilizado será o que está dentro do main
 }
 
 void print_big(int number){ //implementando a função print_big
