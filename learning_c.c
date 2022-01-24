@@ -8,7 +8,7 @@
 
 // declarando uma variável global
 int global;
-int a=111; // essa variável também esta declarada dentro do main
+int a=111; // essa variável também está declarada dentro do main
 
 /* Forma geral de uma função em C:
 
@@ -18,10 +18,10 @@ return_type function_name( parameter list ) {
 */
 
 int fun(int a) { // declarando e implementando a função 'fun' que será usada dentro do main()
-    return a+1; // o valor de a utilizado será o que está dentro do main
+    return a+1; // o valor de 'a' utilizado será o que está dentro do main
 }
 
-int foo(int); /* declarando a função foo. Esta função esta implementada no final. Não é necessario colocar um nome para a 
+int foo(int); /* declarando a função foo. Esta função está implementada no final. Não é necessario colocar um nome para a 
 variável apenas o seu tipo. Quando a implementação da função está em um arquivo diferente é necessário declarar a função 
 no arquivo que chama a função*/
 
@@ -37,14 +37,37 @@ void addone(int *n) { // n aqui é um pointer que aponta para um endereço de me
     (*n)++;
 }
 
+/* definindo uma estrutura simples */
+struct {
+    unsigned int validaLargura;
+    unsigned int validaAltura;
+} status1;
+
+/* definindo uma estrutura com bit fields (variável com tamanho pré-definido) */
+struct {
+    unsigned int validaLargura : 1;
+    unsigned int validaAltura : 1;
+} status2;
+
+// com a keyword typedef podemos dar um novo nome a um tipo
+typedef unsigned char BYTE;
+
 typedef struct { // criando uma estrutura que será usada na função a seguir
-  char * name; // a estrutura person possui 2 atributos name e age
+  char * name; // a estrutura person possui 2 atributos: name e age
   int age;
 } person;
 
 void birthday(person * p){ // criando uma função que acessa uma estrutura
     p->age++; // neste caso acessamos o atributo age da estrutura person e adicionamos 1
 }
+
+/* Uma union é um tipo de dado especial disponível em C que permite armazenar diferentes tipos de dados no mesmo local de memória
+No entanto, apenas um membro pode conter um valor em um determinado momento */
+union Data {
+   int i;
+   float f;
+   char str[20];
+};
 
 unsigned int fatorial(unsigned int x) // construindo função recursiva
 /*Um int vai de -2147483648 à 2147483647. Um unsigned int vai de 0 à 4294967295.*/
@@ -73,8 +96,9 @@ int main() { //main function where the program execution begins
     float b=1.3e-1; // b=1.3x10^(-1)=0.13
     double c=2.0;
     float divs;
+    BYTE byte1=200; // por causa do typedef agora BYTE pode ser usado como abrevição de unsigned char
 
-    // imoprimindo a variável a, a impressão será a da variável local
+    // imoprimindo a variável 'a', a impressão será a da variável local
     printf("\n a = %d", a);
 
     // fazendo operações com as variáveis acima e com variável global
@@ -82,10 +106,11 @@ int main() { //main function where the program execution begins
     divs= c/b;
     oc3=oc1+oc2;
     hex3=hex1-hex2;
-    printf("\n global = %d",global); /*Vai imprimir o novo valor de a.*/
+    printf("\n global = %d",global); /*Vai imprimir o novo valor de 'a'*/
     printf("\n c/b = %.2f.", divs,"\n");
     printf("\n oc3 = %o, hex3 = %x", oc3, hex3);
     printf("\n letra_1 = %c", letra_1);
+    printf("\n byte1 = %u", byte1);
 
     // utilizando constantes definidas no pré-processamento
     int area;
@@ -128,6 +153,10 @@ int main() { //main function where the program execution begins
     numeros[2]=12;
     numeros[3]=15;
     printf("\n O segundo \t elemento do array é %d.", numeros[1]); // \t dá um tab
+
+    // outra forma de criar e popular um array
+    char vogais[] = {'a', 'e', 'i', 'o', 'u'};
+    printf("\n Temos %d vogais.", sizeof(vogais));
 
     /*vamos declarar um array bidimensional*/
     int aa[2][2] = {{11,12},{21,22}};
@@ -179,15 +208,15 @@ int main() { //main function where the program execution begins
     printf("\n Alvo não é igual a 10.");
     }
 
-    /*strings são arrays de caracteres
+    /*strings são arrays unidimensionais de caracteres terminados por um caractere nulo '\0'.
     vamos definir uma string*/
-    char nome[]= "Franciele";
+    char nome[]=  {'H', 'e', 'l', 'l', 'o', '\0'};
     //ou 
-    char name[5]= "Luis"; 
-    // comprimento do array deve ser 1 a mais que o comprimento da string
-    printf("\n %s tem %d anos de idade.", name, a);
+    char name[]= "Hello"; 
+
+    printf("\n %s tem %d anos de idade.", nome, a);
     // imprimindo o comprimento da string
-    printf("\n O número de caracteres de %s é %d.", nome, strlen(nome));
+    printf("\n O número de caracteres de %s é %d.", name, strlen(name));
     // comparando strings
     if (strncmp(nome, "Fran", 4) == 0) {
         printf("\n Olá, Fran.");
@@ -256,49 +285,84 @@ int main() { //main function where the program execution begins
     printf("\n %d", soma(23)); 
     printf("\n %d", soma(33));  
 
+    // definindo um pointer
+    int *intPointer; // um pointer é variável cujo valor é o endereço de outra variável
+    /*O tipo de dados real do valor de todos os ponteiros é um número hexadecimal longo que representa um endereço de memória. 
+    A única diferença entre ponteiros de diferentes tipos de dados é o tipo de dados da variável ou constante para a qual o 
+    ponteiro aponta.*/
+
+    // atribuindo o endereço de uma variável a um ponteiro
+    intPointer = &d;
+    printf("\n O endereço de d é %x", &d);
+    printf("\n O valor de intPointer é %x", intPointer);
+    printf("\n O valor de d é %d", d);
+    printf("\n O valor disponível no endereço intPointer é %d", *intPointer);
+
     /*definindo strings usando um pointer*/
 
-    char * nomee= "Ana";
+    char *nomee= "Ana";
 
     printf("\n O número de caracteres de %s é %d.", nomee, strlen(nomee));
 
     n = 10;
     
-    int * pointer_to_n = &n; // usando pointer para desreferenciar a variável n
+    int *pointer_to_n = &n; // usando pointer para desreferenciar a variável n
     
     *pointer_to_n += 1; // adicionando 1 a variável n, usando pointer
      
     printf("\n Done! n=%d", n);
 
-    /* vamos usar struct para criar um "ponto" com três coordenadas
-    cada uma de um tipo diferente */
-
+    /*struct é um tipo de dados definido pelo usuário disponível em C que permite combinar itens de dados de diferentes tipos,
+    ao contrário de arrays que só podem ter dados do mesmo tipo */
 
     struct ponto
     {
         int p1;
         float p2;
-        char * p3;
+        char p3[10];
     };
     
     struct ponto p;
     p.p1=1;
     p.p2=1.3;
-    p.p3="três";
+    strcpy(p.p3, "três");
 
-    printf("\n %d, %f, %s", p.p1, p.p2, p.p3);
+    printf("\n %d, %.2f, %s", p.p1, p.p2, p.p3);
+
+    //vamos definir um pointer para uma struct
+
+    struct ponto *pointer_to_p;
+
+    // vamos armazenar o endereço de uma variável struct neste pointer
+
+    pointer_to_p = &p;
+
+    // vamos acessar os valores da variável
+
+    printf("\n O valor p2 do ponto p é %.2f", pointer_to_p->p2);
+
+    // vamos ver quanto espaço de memória ocupado pelas estrutura status1 e status2
+
+    printf("\n O espaço de memória ocupado por status1 é: %d", sizeof(status1));
+    printf("\n O espaço de memória ocupado por status2 é: %d", sizeof(status2));
+
+    status2.validaAltura = 1;
+    printf("\n status2.validaAltura = %d", status2.validaAltura);
+    status2.validaAltura = 2;
+    // O número 2 ocupa mais que 1 bit, por isso o valor de validaAltura será 0
+    printf("\n status2.validaAltura = %d", status2.validaAltura);
 
     // usando typedef para facilitar a criação de structs
 
     typedef struct {
-        char * marca;
+        char *marca; 
         int ano;
     } veiculo;
 
-    veiculo meu_carro;
+    veiculo meu_carro; // como usamos o typedef, agora não precisamos escrever: struct veiculo meu_carro;
     veiculo Luis_carro;
 
-    meu_carro.marca= "Chevrolet";
+    meu_carro.marca= "Chevrolet"; // se declaramos a string como pointer, podemos atribuir valores 'diretamente' sem o strcpy
     meu_carro.ano= 2013;
 
     Luis_carro.marca= "Gurgel";
@@ -318,6 +382,73 @@ int main() { //main function where the program execution begins
     printf("\n %s tem %d anos de id ade.", joao.name, joao.age);
     birthday(&joao);
     printf("\n Feliz aniversário! %s tem agora %d anos.", joao.name, joao.age);
+
+    // acessando a union data
+
+    union Data data;
+
+    printf("\n A memória ocupada por data é %d", sizeof(data)); // valor será igual ao da maior variável
+
+    // acessando os membros de uma union
+
+    data.i = 10;
+    data.f = 220.5;
+    strcpy( data.str, "C Programming");
+
+    printf("\n data.i : %d", data.i);
+    printf("\n data.f : %f", data.f);
+    printf("\n data.str : %s", data.str);
+
+    /*Podemos ver na impressão que os valores de i e f foram corrompidos porque o valor de str é o que está 'valendo' já que ele 
+    foi o último a ser atribuído*/
+
+    // agora vamos atribuir valores aos membros da union data um de cada vez
+
+    data.i = 10;
+    printf("\n data.i : %d", data.i);
+   
+    data.f = 220.5;
+    printf("\n data.f : %.2f", data.f);
+   
+    strcpy( data.str, "C Programming");
+    printf("\n data.str : %s", data.str);
+
+    // vamos fornecer o valor de um caracter pelo teclado e depois imprimi-lo na tela
+    int letra_2;
+    printf("\n Digite um valor: ");
+    letra_2 = getchar( );
+
+    printf("\n Você digitou: ");
+    putchar( letra_2 );
+ 
+    // agora vamos entrar uma string e imprimir uma string
+    char palavra2[100];
+    printf("\n Digite um valor: ");
+    fgets( palavra2, 100, stdin );
+
+    printf("\n Você digitou: ");
+    puts( palavra2 );
+
+    // podemos usar fgets para entrar uma string de um arquivo
+    FILE *ftxt;
+    char palavra3[60];
+
+    // abrindo arquivo
+    ftxt = fopen("file.txt", "r");
+    fgets(palavra3, 60, ftxt);
+    puts(palavra3);
+    // fechando arquivo
+    fclose(ftxt);
+
+    // a função scanf pega o que é digitado na tela de acordo com o formato especificado
+    char palavra4[100];
+    float num1;
+
+    printf("\n Digite uma string seguida de um número: ");
+    //Vamos ler uma string e um inteiro
+    scanf("%s %f", palavra4, &num1);
+
+    printf("Você digitou: %s %f.", palavra4, num1);
 
     /*vamos alocar dinamicamente apenas o suficiente para manter uma struct person na memória e,
     em seguida, retornar um ponteiro do tipo person para os dados recém-alocados.*/ 
@@ -404,7 +535,7 @@ int main() { //main function where the program execution begins
 }
 
 int foo(int a) {  // implementando a função foo
-    return a+1; // o valor de a utilizado será o que está dentro do main
+    return a+1; // o valor de 'a' utilizado será o que está dentro do main
 }
 
 void print_big(int number){ //implementando a função print_big
