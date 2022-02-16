@@ -1,10 +1,23 @@
 #include <stdio.h> //"cabeçalho padrão de entrada/saída", this is a preprocessor command
 #include <stdlib.h> //possui funções envolvendo alocação de memória, controle de processos, conversões e outras 
 
-// definindo constantes
+// definindo constantes de préprocessamento
 #define ALTURA 20
 #define LARGURA 15
 #define NOVA_LINHA '\n'
+
+// Vamos usar o operador de continução (\) e o operador (#) que transforma o parâmetro em string
+#define  mensagem_para(a, b)  \
+   printf("\n" #a " and " #b ": We love you!")
+
+// o operador (##) serve para combinar dois argumentos
+#define cola_token(n) printf ("\n token" #n " = %d", token##n)
+
+// definindo um macro para calcular número ao cubo
+#define ao_cubo(x) ((x) * (x) * (x))
+
+// macro para achar máximo entre dois números
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
 
 // declarando uma variável global
 int global;
@@ -128,6 +141,22 @@ int main() { //main function where the program execution begins
 
     printf("%c", NOVA_LINHA);
     printf("O valor da área é: %.2f", arear);
+
+    /*testando alguns macros pré-definidos*/
+    printf("\n File :%s", __FILE__ );
+    printf("\n Date :%s", __DATE__ );
+    printf("\n Time :%s", __TIME__ );
+    printf("\n Line :%d", __LINE__ );
+    printf("\n ANSI :%d", __STDC__ );
+
+    mensagem_para(John, Mary);
+
+    int token3 = 23;
+    cola_token(3);
+
+    printf("\n 11 ao cubo é %d.", ao_cubo(11));
+
+    printf("\n O máximo entre 2.3 e 3.2 é %.1f", MAX(2.3,3.2));
 
     /*imprimindo o endereço de uma variável*/
 
@@ -412,6 +441,36 @@ int main() { //main function where the program execution begins
    
     strcpy( data.str, "C Programming");
     printf("\n data.str : %s", data.str);
+
+    // vamos criar um arquivo de texto
+    FILE *fp;
+    char buff[240];
+
+    // vamos usar fopen para abrir o arquivo test.txt 
+    /* w+ significa que iremos abrir um arquivo de texto para leitura e escrita. 
+    Primeiro, ele trunca o arquivo para comprimento zero, se existir, caso contrário, cria um arquivo se não existir.*/
+    fp = fopen("/tmp/test.txt", "w+");
+    fputc('A', fp); // escrever um único caracter no arquivo
+    fputs("\n Testando fputs.", fp); // escrever uma string no aquivo
+    fprintf(fp, "\n Testanto fprint. Float %.3f", 3.1415);
+    fclose(fp); // fechando o arquivo
+
+    // agora vamos abrir um arquivo existente e ver o que tem dentro
+
+    fp = fopen("/tmp/test.txt", "r");
+
+    buff[1] = fgetc(fp); // lê um único caracter
+    printf("\n Primeiro caracter do arquivo: %c", buff[1]);
+
+    fscanf(fp, "%s", buff); // lê até encontrar um espaço
+    printf("\n 1 : %s", buff );
+
+    fgets(buff, 240, (FILE*)fp); // lê até encontrar \n ou final do arquivo
+    printf("\n 2: %s", buff );
+   
+    fgets(buff, 240, (FILE*)fp);
+    printf("\n 3: %s", buff );
+    fclose(fp);
 
     // vamos fornecer o valor de um caracter pelo teclado e depois imprimi-lo na tela
     int letra_2;
