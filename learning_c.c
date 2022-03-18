@@ -1,5 +1,9 @@
 #include <stdio.h> //"cabeçalho padrão de entrada/saída", this is a preprocessor command
 #include <stdlib.h> //possui funções envolvendo alocação de memória, controle de processos, conversões e outras 
+#include <errno.h> // ornece macros para identificar e relatar erros de execução através de códigos de erro
+#include <string.h> // contém uma série de funções para manipular strings
+#include "my_header.h" //meu header com as funções ao_cubo e MAX
+#include <stdarg.h> // usado para trabalhar com funções com número variável de parâmentros
 
 // definindo constantes de préprocessamento
 #define ALTURA 20
@@ -13,11 +17,7 @@
 // o operador (##) serve para combinar dois argumentos
 #define cola_token(n) printf ("\n token" #n " = %d", token##n)
 
-// definindo um macro para calcular número ao cubo
-#define ao_cubo(x) ((x) * (x) * (x))
-
-// macro para achar máximo entre dois números
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
+extern int errno;
 
 // declarando uma variável global
 int global;
@@ -82,19 +82,47 @@ union Data {
    char str[20];
 };
 
-unsigned int fatorial(unsigned int x) // construindo função recursiva
-/*Um int vai de -2147483648 à 2147483647. Um unsigned int vai de 0 à 4294967295.*/
+double fatorial(unsigned int x) // construindo função recursiva
 {
-    if (x == 0 || x == 1)
-    {
+    if (x <= 1){
         /* Terminating case */
         return 1;
     }
-    else if (x > 1)
+    return x * fatorial(x - 1);
+}
+
+int fibonacci (int i) { // Outro exemplo de função recursiva
+    if (i == 0)
     {
-        /* Recursive step */
-        return x * fatorial(x-1);
+        return 0;
     }
+
+    if (i == 1)
+    {
+        return 1;
+    }
+    return fibonacci(i-1) + fibonacci(i-2);
+    
+}
+
+// vamos criar uma função com um número variável de parâmetros
+double average(int num, ...) {
+    va_list valist;
+    double sum = 0.0;
+    int i;
+
+    /*Vamos inicializar valist para num argumentos*/
+    va_start(valist, num);
+
+     /*Agora vamos acessar os argumentos atribuidos a valist */
+   for (i = 0; i < num; i++) {
+      sum += va_arg(valist, int);
+   }
+	
+   /*Limpando a mémoria reservada para valist */
+   va_end(valist);
+
+   return sum/num;
 }
 
 int main() { //main function where the program execution begins
@@ -329,9 +357,23 @@ int main() { //main function where the program execution begins
 
     /*definindo strings usando um pointer*/
 
-    char *nomee= "Ana";
+    char *nomee; //criando um pointer para um caracter sem especificar o seu tamanho
+
+    nomee = malloc( 40 * sizeof(char) ); //Alocando memória dinamicamente 40 elementos do tipo char
+
+    strcpy(nomee, "Anna Machado Pereira"); 
 
     printf("\n O número de caracteres de %s é %d.", nomee, strlen(nomee));
+
+    free(nomee); // Liberando a memória novamente
+
+    nomee = calloc(30, sizeof(char)); //Outro método de alocação
+
+    strcpy(nomee, "Albert Einstein");
+
+    printf("\n O número de caracteres de %s é %d.", nomee, strlen(nomee));
+
+    free(nomee);
 
     n = 10;
     
@@ -588,7 +630,65 @@ int main() { //main function where the program execution begins
     free(pnumbers);
     
     // imprimindo resultado de função recursiva
-    printf("\n O fatorial de 12 é %d", fatorial(12));
+    printf("\n O fatorial de 13 é %.0f", fatorial(13));
+
+    printf("\n Imprimindo sequência de Fibonacci \n");
+    for (i = 0; i < 10; i++)
+    {
+        printf("%d \t", fibonacci(i));
+    }
+    
+
+    // type casting interger to float
+    int n1 = 10, n2 = 23;
+    double n3;
+
+    n3 = (double) n1 / n2;
+    printf("\n O valor de n3 é %f: ",n3);
+
+    // exemplo de integer promotion
+
+    n2 = n1 + 'c';
+    printf("\n O valor de n2 é: %d ", n2);
+
+    n3 = n1 + 'c';
+    printf("\n O valor de n3 é: %f \n", n3);
+
+    //Avaliando função com argumentos variáveis
+
+    printf("\n A média de 2, 3, 4, 5 = %f", average(4, 2,3,4,5));
+    printf("\n A média de 5, 10, 15 = %f", average(3, 5,10,15));
+
+    // vamos tentar abrir um arquivo inexistente para gerar uma mensagem de erro
+    FILE * pf;
+    int errnum;
+    pf = fopen("unexist.txt", "rb"); 
+	
+    if (pf == NULL) {
+   
+       errnum = errno;
+       fprintf(stderr, "\n Valor de errno: %d", errno);
+       perror("\n Usando perror para imprimir a mensagem do erro: ");
+       fprintf(stderr, "\n Usando strerror para retornar um pointer para a representação textual do erro: %s", strerror(errnum));
+    } else {
+   
+       fclose (pf);
+    }
+
+    // erro para divisão por zero 
+    int dividend = 20;
+    int divisor = 0;
+    int quotient;
+  
+    if( divisor == 0){
+       fprintf(stderr, "\n Divisão por zero. Saindo ... \n");
+       exit(EXIT_FAILURE);
+    }
+   
+    quotient = dividend / divisor;
+    fprintf(stderr, "\n O valor do quociente é: %d", quotient );
+
+    exit(EXIT_SUCCESS);
 
     return 0;
 }
